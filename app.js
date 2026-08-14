@@ -22,6 +22,7 @@
         lang: parsed.lang === "en" ? "en" : "pt-BR",
         lifts: parsed.lifts && typeof parsed.lifts === "object" ? parsed.lifts : {},
         scale: Array.isArray(parsed.scale) ? parsed.scale : [],
+        meals: parsed.meals && typeof parsed.meals === "object" ? parsed.meals : {},
       };
     } catch {
       return emptyStore();
@@ -29,7 +30,7 @@
   }
 
   function emptyStore() {
-    return { startMonday: null, completions: {}, lang: "pt-BR", lifts: {}, scale: [] };
+    return { startMonday: null, completions: {}, lang: "pt-BR", lifts: {}, scale: [], meals: {} };
   }
 
   function saveStore() {
@@ -254,6 +255,7 @@
       hoje: ui.tabToday,
       semana: ui.tabWeek,
       cardio: ui.tabCardio,
+      dieta: ui.tabDiet,
       guia: ui.tabGuide,
     };
     $$(".tab").forEach((btn) => {
@@ -560,6 +562,105 @@
       </div>`;
   }
 
+  function mealDone(id) {
+    const day = (state.store.meals || {})[todayISO()] || {};
+    return Boolean(day[id]);
+  }
+
+  function toggleMeal(id) {
+    if (!state.store.meals) state.store.meals = {};
+    const d = todayISO();
+    if (!state.store.meals[d]) state.store.meals[d] = {};
+    state.store.meals[d][id] = !state.store.meals[d][id];
+    saveStore();
+    const keep = state.tab;
+    render();
+    state.tab = keep;
+  }
+
+  function renderDieta() {
+    const ui = L().ui;
+    const diet = L().diet;
+    const mealN = diet.meals.filter((m) => mealDone(m.id)).length;
+    const pct = Math.round((mealN / diet.meals.length) * 100);
+
+    const clock = diet.clock
+      .map((c) => `<div class="clock-row"><span class="clock-t">${c.t}</span><span class="clock-d">${c.d}</span></div>`)
+      .join("");
+
+    const meals = diet.meals
+      .map((m) => {
+        const done = mealDone(m.id);
+        const items = m.items
+          .map((it) => {
+            const tag =
+              it.how === "eat"
+                ? `<span class="how eat">${diet.eat}</span>`
+                : it.how === "drink"
+                  ? `<span class="how drink">${diet.drink}</span>`
+                  : "";
+            return `<div class="food-row"><div><div class="food-name">${it.name}</div><div class="food-qty">${it.qty}</div></div>${tag}</div>`;
+          })
+          .join("");
+        return `
+          <div class="meal-card${done ? " done" : ""}">
+            <div class="meal-top">
+              <div>
+                <div class="meal-time">${m.time}</div>
+                <h3 class="meal-title">${m.title}</h3>
+                <div class="meal-kcal">${m.kcal}</div>
+              </div>
+              <button type="button" class="btn-meal${done ? " on" : ""}" data-meal="${m.id}">${done ? diet.marked : diet.mark}</button>
+            </div>
+            ${items}
+            <p class="meal-note">${m.note}</p>
+          </div>`;
+      })
+      .join("");
+
+    const supps = diet.supps
+      .map(
+        (s) =>
+          `<div class="info-block"><h3>${s.when} · ${s.name}</h3><p>${s.d}</p></div>`
+      )
+      .join("");
+
+    const rules = diet.rules.map((r) => `<li>${r}</li>`).join("");
+
+    const macros = diet.macros
+      .map((x) => `<div class="macro-card"><div class="macro-k">${x.k}</div><div class="macro-v">${x.v}</div></div>`)
+      .join("");
+
+    $("#panel-dieta").innerHTML = `
+      <div class="week-hero">
+        <h2>${diet.heroKcal} <span class="kcal-unit">${diet.heroKcalUnit}</span></h2>
+        <p>${diet.heroSub}</p>
+        <div class="progress-row">
+          <div class="bar"><i style="width:${pct}%"></i></div>
+          <span class="bar-label">${mealN}/${diet.meals.length}</span>
+        </div>
+      </div>
+      <div class="macro-grid">${macros}</div>
+      <div class="section-label">${diet.sectionClock}</div>
+      <div class="card clock-card">${clock}</div>
+      <div class="section-label">${diet.sectionMeals}</div>
+      ${meals}
+      <div class="section-label">${diet.sectionSupp}</div>
+      ${supps}
+      <div class="section-label">${diet.sectionRules}</div>
+      <div class="card"><ul class="rule-list">${rules}</ul></div>
+      <div class="section-label">${ui.scaleTitle}</div>
+      <div class="info-block">
+        <h3>${ui.scaleTitle}</h3>
+        <p>${ui.scaleBody}</p>
+        <div class="scale-row">
+          <input id="scale-kg" class="w-in" inputmode="decimal" placeholder="${latestScale() ? latestScale().kg : D.profile.weightKg}" aria-label="${ui.scaleTitle}">
+          <button type="button" class="btn-scale" data-save-scale>${ui.scaleSave}</button>
+        </div>
+        <p class="lang-hint">${scaleSummary(ui)}</p>
+      </div>`;
+  }
+
   function renderGuia() {
     const standalone =
       window.navigator.standalone === true ||
@@ -581,16 +682,6 @@
       <div class="info-block">
         <h3>${ui.stallTitle}</h3>
         <p>${ui.stallBody}</p>
-      </div>
-      <div class="section-label">${ui.scaleTitle}</div>
-      <div class="info-block">
-        <h3>${ui.scaleTitle}</h3>
-        <p>${ui.scaleBody}</p>
-        <div class="scale-row">
-          <input id="scale-kg" class="w-in" inputmode="decimal" placeholder="${latestScale() ? latestScale().kg : D.profile.weightKg}" aria-label="${ui.scaleTitle}">
-          <button type="button" class="btn-scale" data-save-scale>${ui.scaleSave}</button>
-        </div>
-        <p class="lang-hint">${scaleSummary(ui)}</p>
       </div>
       <div class="section-label">${ui.sectionWeek}</div>
       <div class="info-block">
@@ -638,6 +729,7 @@
     if (state.tab === "hoje") renderHoje();
     if (state.tab === "semana") renderSemana();
     if (state.tab === "cardio") renderCardio();
+    if (state.tab === "dieta") renderDieta();
     if (state.tab === "guia") renderGuia();
   }
 
@@ -658,6 +750,11 @@
     if (e.target.closest("[data-save-scale]")) {
       const ok = saveScale($("#scale-kg")?.value);
       if (ok) render();
+      return;
+    }
+    const mealBtn = e.target.closest("[data-meal]");
+    if (mealBtn) {
+      toggleMeal(mealBtn.dataset.meal);
       return;
     }
     const langBtn = e.target.closest("[data-lang]");
