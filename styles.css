@@ -479,6 +479,40 @@ button {
   font-size: 14px;
 }
 
+.lang-card {
+  margin: 16px 16px 8px;
+  padding: 14px 16px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+.lang-switch {
+  display: flex;
+  gap: 4px;
+  background: var(--surface2);
+  border-radius: 12px;
+  padding: 4px;
+}
+.lang-btn {
+  flex: 1;
+  min-height: 42px;
+  border-radius: 9px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+.lang-btn.on {
+  background: var(--accent);
+  color: #fff;
+}
+.lang-hint {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
 .install {
   margin: 16px;
   padding: 14px;

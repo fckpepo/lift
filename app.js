@@ -8,8 +8,6 @@
 
   const state = {
     tab: "hoje",
-    viewKey: null,
-    viewDate: null,
     store: loadStore(),
   };
 
@@ -21,6 +19,7 @@
       return {
         startMonday: parsed.startMonday || null,
         completions: parsed.completions || {},
+        lang: parsed.lang === "en" ? "en" : "pt-BR",
       };
     } catch {
       return emptyStore();
@@ -28,11 +27,49 @@
   }
 
   function emptyStore() {
-    return { startMonday: null, completions: {} };
+    return { startMonday: null, completions: {}, lang: "pt-BR" };
   }
 
   function saveStore() {
     localStorage.setItem(STORE_KEY, JSON.stringify(state.store));
+  }
+
+  function lang() {
+    return state.store.lang === "en" ? "en" : "pt-BR";
+  }
+
+  function L() {
+    return window.LIFT_I18N[lang()];
+  }
+
+  function fill(str, map) {
+    return String(str).replace(/\{(\w+)\}/g, (_, k) =>
+      map[k] === undefined ? "" : map[k]
+    );
+  }
+
+  function setLang(next) {
+    state.store.lang = next === "en" ? "en" : "pt-BR";
+    saveStore();
+    document.documentElement.lang = lang();
+    render();
+  }
+
+  function sessionView(key) {
+    const base = D.sessions[key];
+    const loc = L().sessions[key];
+    return {
+      ...base,
+      title: loc.title,
+      tagLabel: loc.tagLabel,
+      warmup: loc.warmup,
+      notes: loc.notes || [],
+      cardio: loc.cardio,
+      exercises: (base.exercises || []).map((ex, i) => ({
+        ...ex,
+        ...(loc.exercises[i] || {}),
+      })),
+    };
   }
 
   /* ── dates in São Paulo ── */
@@ -42,7 +79,6 @@
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
-      weekday: "short",
     });
     const map = {};
     for (const p of fmt.formatToParts(date)) map[p.type] = p.value;
@@ -60,7 +96,6 @@
   }
 
   function weekdayMon0(iso) {
-    // 0 = Monday … 6 = Sunday
     return (isoToDate(iso).getUTCDay() + 6) % 7;
   }
 
@@ -78,7 +113,8 @@
   }
 
   function fmtLong(iso) {
-    return new Intl.DateTimeFormat("pt-BR", {
+    const tag = lang() === "en" ? "en-US" : "pt-BR";
+    return new Intl.DateTimeFormat(tag, {
       timeZone: "UTC",
       weekday: "long",
       day: "numeric",
@@ -90,26 +126,18 @@
   function planInfo(iso = todayISO()) {
     const start = state.store.startMonday;
     if (!start) {
-      return {
-        started: false,
-        planWeek: null,
-        mesoWeek: 1,
-        meso: D.meso[0],
-        block: null,
-      };
+      return { started: false, planWeek: null, mesoWeek: 1, block: null };
     }
     const thisMon = mondayOf(iso);
     const weeks = Math.round((isoToDate(thisMon) - isoToDate(start)) / 86400000 / 7);
     const planWeek = weeks + 1;
     const mesoWeek = ((planWeek - 1) % 4) + 1;
     const block = Math.floor((planWeek - 1) / 4) + 1;
-    return {
-      started: true,
-      planWeek,
-      mesoWeek,
-      meso: D.meso[mesoWeek - 1],
-      block,
-    };
+    return { started: true, planWeek, mesoWeek, block };
+  }
+
+  function mesoOf(mesoWeek) {
+    return L().meso[mesoWeek - 1];
   }
 
   function sessionForDate(iso) {
@@ -149,8 +177,10 @@
   }
 
   function resetPlan() {
-    if (!confirm("Zerar o plano? Semana e treinos marcados voltam do zero.")) return;
+    if (!confirm(L().ui.resetConfirm)) return;
+    const keepLang = lang();
     state.store = emptyStore();
+    state.store.lang = keepLang;
     saveStore();
     render();
   }
@@ -164,69 +194,89 @@
     return `${n} × ${ex.reps}`;
   }
 
+  function updateChrome() {
+    const ui = L().ui;
+    const labels = {
+      hoje: ui.tabToday,
+      semana: ui.tabWeek,
+      cardio: ui.tabCardio,
+      guia: ui.tabGuide,
+    };
+    $$(".tab").forEach((btn) => {
+      const span = btn.querySelector("span");
+      if (span && labels[btn.dataset.tab]) span.textContent = labels[btn.dataset.tab];
+    });
+    document.documentElement.lang = lang();
+  }
+
   /* ── header ── */
   function renderHeader() {
     const info = planInfo();
+    const ui = L().ui;
     const chip = $("#week-chip");
     chip.classList.remove("idle", "deload");
     if (!info.started) {
       chip.classList.add("idle");
-      chip.innerHTML = `<span class="w-num">Não iniciado</span><span class="w-sub">marque o 1º treino</span>`;
+      chip.innerHTML = `<span class="w-num">${ui.weekIdle}</span><span class="w-sub">${ui.weekIdleSub}</span>`;
     } else {
       if (info.mesoWeek === 4) chip.classList.add("deload");
-      chip.innerHTML = `<span class="w-num">Semana ${info.planWeek}</span><span class="w-sub">Bloco ${info.block} · ${info.meso.name}</span>`;
+      const meso = mesoOf(info.mesoWeek);
+      chip.innerHTML = `<span class="w-num">${fill(ui.weekN, { n: info.planWeek })}</span><span class="w-sub">${fill(ui.blockMeso, { b: info.block, name: meso.name })}</span>`;
     }
     const p = D.profile;
-    $("#brand-sub").textContent = `${p.weightKg} kg · ${p.heightCm} cm · ~${p.bfPct}% · ${p.level}`;
+    $("#brand-sub").textContent = `${p.weightKg} kg · ${p.heightCm} cm · ~${p.bfPct}% · ${ui.level}`;
   }
 
   /* ── session view ── */
   function renderSession(container, iso) {
     const slot = sessionForDate(iso);
     const info = planInfo(iso);
-    const meso = info.meso;
+    const meso = mesoOf(info.mesoWeek);
     const done = isComplete(iso);
     const isToday = iso === todayISO();
+    const ui = L().ui;
 
     if (!slot) {
       container.innerHTML = `
         <div class="rest">
-          <div class="kind-pill kind-rest" style="margin:0 auto 8px">fim de semana</div>
-          <h2>DESCANSO</h2>
-          <p>O plano é segunda a sexta. Caminhada fácil vale se você quiser — não conta como semana do plano e não é prioridade.</p>
+          <div class="kind-pill kind-rest" style="margin:0 auto 8px">${ui.weekend}</div>
+          <h2>${ui.rest}</h2>
+          <p>${ui.restBody}</p>
         </div>`;
       return;
     }
 
-    const ses = D.sessions[slot.key];
+    const ses = sessionView(slot.key);
     const headDate = fmtLong(iso);
 
     let html = `
       <div class="session-head">
         <div>
           <h2 class="session-title">${ses.title}</h2>
-          <div class="session-meta">${headDate}${isToday ? " · hoje" : ""} · ${ses.minutes || 45} min</div>
+          <div class="session-meta">${headDate}${isToday ? ` · ${ui.today}` : ""} · ${ses.minutes || 45} ${ui.min}</div>
         </div>
         <div class="kind-pill kind-${ses.tag}">${ses.tagLabel}</div>
       </div>
       <div class="callout warm">
-        <div class="c-label">Aquecimento</div>
+        <div class="c-label">${ui.warmup}</div>
         <p>${ses.warmup}</p>
       </div>
       <div class="callout amber">
-        <div class="c-label">Semana ${info.started ? info.planWeek : "—"} · ${meso.name}</div>
+        <div class="c-label">${fill(ui.weekChip, { n: info.started ? info.planWeek : "—", name: meso.name })}</div>
         <p>${meso.liftNote}</p>
       </div>`;
 
     (ses.notes || []).forEach((n, i) => {
-      html += `<div class="callout ${i === 0 && ses.key === "lower-a" ? "warn" : ""}">
-        <div class="c-label">${ses.key.startsWith("lower") && i === 0 ? "Joelhos" : "Nota"}</div>
+      const isKnee = ses.key.startsWith("lower") && i === 1;
+      const label = isKnee ? ui.knees : ui.note;
+      html += `<div class="callout ${ses.key === "lower-a" && i === 1 ? "warn" : ""}">
+        <div class="c-label">${label}</div>
         <p>${n}</p>
       </div>`;
     });
 
     if (ses.kind === "cardio") {
-      html += renderCardioBlock(meso);
+      html += renderCardioBlock(meso, ses);
     }
 
     ses.exercises.forEach((ex, i) => {
@@ -245,17 +295,15 @@
             <div class="pills">
               <span class="pill rpe">RPE ${ex.rpe}</span>
               <span class="pill">⏱ ${ex.rest}</span>
-              ${ex.knee ? '<span class="pill">joelho</span>' : ""}
+              ${ex.knee ? `<span class="pill">${ui.kneePill}</span>` : ""}
             </div>
             <div class="ex-note">${ex.note}</div>
           </div>
         </div>`;
     });
 
-    const cta = done ? "Treino concluído · toque para desfazer" : "Concluí este treino";
-    const hint = info.started
-      ? "A semana do plano anda toda segunda. Concluir só registra aderência."
-      : "O plano começa na segunda da semana deste treino.";
+    const cta = done ? ui.doneCta : ui.doCta;
+    const hint = info.started ? ui.hintStarted : ui.hintNotStarted;
 
     html += `
       <div class="complete-wrap">
@@ -266,21 +314,22 @@
     container.innerHTML = html;
   }
 
-  function renderCardioBlock(meso) {
+  function renderCardioBlock(meso, ses) {
     const c = meso.cardio;
+    const ui = L().ui;
     return `
       <div class="zone-box">
-        <div class="zl">Sua Zona 2</div>
+        <div class="zl">${ui.yourZ2}</div>
         <div class="zv">${D.profile.z2[0]}–${D.profile.z2[1]}<span style="font-size:16px;color:var(--muted)"> bpm</span></div>
-        <p>${D.sessions.z2.cardio.hrNote}</p>
+        <p>${ses.cardio.hrNote}</p>
       </div>
       <div class="card">
         <h3>${c.title} · ${c.duration}</h3>
         <p>${c.detail}</p>
       </div>
       <div class="callout">
-        <div class="c-label">Máquina</div>
-        <p>${D.sessions.z2.notes[0]}</p>
+        <div class="c-label">${ui.machine}</div>
+        <p>${ses.notes[1] || ses.notes[0]}</p>
       </div>`;
   }
 
@@ -288,18 +337,19 @@
   function renderHoje() {
     const iso = todayISO();
     const slot = sessionForDate(iso);
+    const days = L().weekdays;
     const strip = D.weekdays
       .map((d) => {
         const dayIso = addDays(mondayOf(iso), d.dow - 1);
-        const active = slot && slot.key === d.key && weekdayMon0(iso) < 5;
+        const loc = days[d.key];
         const cls = [
           "day-pill",
-          active && weekdayMon0(iso) === d.dow - 1 ? "active today" : "",
+          slot && slot.key === d.key && weekdayMon0(iso) === d.dow - 1 ? "active today" : "",
           isComplete(dayIso) ? "done" : "",
         ]
           .filter(Boolean)
           .join(" ");
-        return `<div class="${cls}"><span class="d-name">${d.short}</span><span class="d-tag">${d.label.split(" ")[0]}</span></div>`;
+        return `<div class="${cls}"><span class="d-name">${loc.short}</span><span class="d-tag">${loc.pill}</span></div>`;
       })
       .join("");
 
@@ -311,6 +361,8 @@
     const iso = todayISO();
     const mon = mondayOf(iso);
     const info = planInfo(iso);
+    const ui = L().ui;
+    const meso = mesoOf(info.mesoWeek);
     const days = [0, 1, 2, 3, 4, 5, 6].map((i) => {
       const dayIso = addDays(mon, i);
       return { iso: dayIso, slot: sessionForDate(dayIso), mon0: i };
@@ -320,17 +372,16 @@
     const pct = Math.round((doneN / 5) * 100);
 
     const heroTitle = info.started
-      ? `Semana ${info.planWeek} · ${info.meso.name}`
-      : "Plano ainda não começou";
+      ? fill(ui.weekChip, { n: info.planWeek, name: meso.name })
+      : ui.planNotStarted;
     const heroSub = info.started
-      ? `Bloco ${info.block} de hipertrofia + Zona 2. ${info.meso.liftNote}`
-      : "Marque o primeiro treino (seg–sex). A semana 1 começa na segunda daquela semana.";
+      ? fill(ui.planHero, { b: info.block, note: meso.liftNote })
+      : ui.planNotStartedSub;
 
     const rows = days
       .map((d) => {
-        const names = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
-        const title = d.slot ? D.sessions[d.slot.key].title : "Descanso";
-        const sub = d.slot ? D.sessions[d.slot.key].tagLabel : "Não programado";
+        const title = d.slot ? sessionView(d.slot.key).title : ui.restDay;
+        const sub = d.slot ? sessionView(d.slot.key).tagLabel : ui.notProgrammed;
         const cls = [
           "week-row",
           d.slot && isComplete(d.iso) ? "done" : "",
@@ -339,7 +390,7 @@
           .filter(Boolean)
           .join(" ");
         return `<button class="${cls}" type="button" data-open="${d.iso}">
-          <span class="wr-dow">${names[d.mon0]}</span>
+          <span class="wr-dow">${ui.daysTiny[d.mon0]}</span>
           <div class="wr-main"><div class="wr-title">${title}</div><div class="wr-sub">${sub}</div></div>
           ${d.slot ? '<span class="check"></span>' : ""}
         </button>`;
@@ -361,70 +412,89 @@
 
   function renderCardio() {
     const info = planInfo();
-    const meso = info.meso;
+    const meso = mesoOf(info.mesoWeek);
+    const ui = L().ui;
+    const p = D.profile;
     $("#panel-cardio").innerHTML = `
       <div class="zone-box">
-        <div class="zl">Zona 2 · FCmáx ${D.profile.hrMax}</div>
-        <div class="zv">${D.profile.z2[0]}–${D.profile.z2[1]} <span style="font-size:18px;color:var(--muted)">bpm</span></div>
-        <p>220 − ${D.profile.age} = ${D.profile.hrMax}. Alvo 65–70%. VO₂ atual ${D.profile.vo2} → meta ≥ ${D.profile.vo2Target}.</p>
+        <div class="zl">${fill(ui.zoneLine, { hr: p.hrMax })}</div>
+        <div class="zv">${p.z2[0]}–${p.z2[1]} <span style="font-size:18px;color:var(--muted)">bpm</span></div>
+        <p>${fill(ui.zoneMath, { age: p.age, hr: p.hrMax, vo2: p.vo2, target: p.vo2Target })}</p>
       </div>
-      <div class="section-label">Esta semana</div>
+      <div class="section-label">${ui.thisWeek}</div>
       <div class="card">
         <h3>${meso.cardio.title} · ${meso.cardio.duration}</h3>
         <p>${meso.cardio.detail}</p>
       </div>
-      <div class="section-label">Onde encaixa</div>
+      <div class="section-label">${ui.whereItFits}</div>
       <div class="card">
-        <p><strong>Quarta</strong> é o único dia de cardio no relógio. 40 min na bike, sessão inteira ≤45. Sem musculação.</p>
-        <p style="margin-top:8px"><strong>Seg / ter / qui / sex</strong> são só musculação, 45 min. Sem finisher de cardio — não cabe com rest de 2–3 min.</p>
-        <p style="margin-top:8px">Fim de semana não é prioridade. Se sobrar energia, caminhada. Sem corrida.</p>
+        <p>${ui.cardioWhere1}</p>
+        <p style="margin-top:8px">${ui.cardioWhere2}</p>
+        <p style="margin-top:8px">${ui.cardioWhere3}</p>
       </div>
-      <div class="section-label">Bloco de 4 semanas</div>
-      ${D.meso
-        .map(
-          (m) => `<div class="card"><h3>S${m.week} · ${m.name}</h3><p><strong>${m.cardio.title}</strong> — ${m.cardio.duration}. ${m.cardio.detail}</p></div>`
+      <div class="section-label">${ui.fourWeekBlock}</div>
+      ${L()
+        .meso.map(
+          (m, i) =>
+            `<div class="card"><h3>${fill(ui.mesoWeek, { n: i + 1, name: m.name })}</h3><p><strong>${m.cardio.title}</strong> — ${m.cardio.duration}. ${m.cardio.detail}</p></div>`
         )
         .join("")}
       <div class="callout warn">
-        <div class="c-label">Joelho</div>
-        <p>Bike primeiro. Elíptico em segundo. Escada só se estiver confortável. Intervalos da semana 3 só na bike, nunca no dia de perna.</p>
+        <div class="c-label">${ui.knee}</div>
+        <p>${ui.kneeCardio}</p>
       </div>`;
   }
 
   function renderGuia() {
-    const standalone = window.navigator.standalone === true
-      || window.matchMedia("(display-mode: standalone)").matches;
+    const standalone =
+      window.navigator.standalone === true ||
+      window.matchMedia("(display-mode: standalone)").matches;
+    const ui = L().ui;
+    const current = lang();
 
     $("#panel-guia").innerHTML = `
-      ${standalone ? "" : `<div class="install"><strong>iPhone · adicionar à Tela de Início.</strong> Safari → Compartilhar → Adicionar à Tela de Início. Abre em tela cheia, sem barra do Safari.</div>`}
-      <div class="section-label">Semana do plano</div>
-      <div class="info-block">
-        <h3>Calendário + conclusão</h3>
-        <p>A semana 1 começa na <strong>segunda da semana do primeiro treino que você marcar</strong>. Depois disso, o número da semana avança sozinho toda segunda-feira. Marcar um treino só registra que você fez — não atrasa nem adianta o bloco.</p>
+      <div class="lang-card">
+        <div class="section-label" style="padding:0 0 8px">${ui.sectionLang}</div>
+        <div class="lang-switch" role="group" aria-label="${ui.sectionLang}">
+          <button type="button" class="lang-btn${current === "pt-BR" ? " on" : ""}" data-lang="pt-BR">PT-BR</button>
+          <button type="button" class="lang-btn${current === "en" ? " on" : ""}" data-lang="en">EN</button>
+        </div>
+        <p class="lang-hint">${ui.langHint}</p>
       </div>
-      <div class="section-label">Por que este plano</div>
-      ${D.why.map((w) => `<div class="info-block"><h3>${w.t}</h3><p>${w.d}</p></div>`).join("")}
-      <div class="section-label">Fora do plano</div>
+      ${standalone ? "" : `<div class="install"><strong>${ui.installTitle}</strong> ${ui.installBody}</div>`}
+      <div class="section-label">${ui.sectionWeek}</div>
       <div class="info-block">
-        <h3>Não faça estes</h3>
-        <p>${D.banned.map((b) => `• ${b}`).join("<br>")}</p>
+        <h3>${ui.weekHowTitle}</h3>
+        <p>${ui.weekHowBody}</p>
       </div>
-      <div class="section-label">Progressão</div>
+      <div class="section-label">${ui.sectionWhy}</div>
+      ${L()
+        .why.map((w) => `<div class="info-block"><h3>${w.t}</h3><p>${w.d}</p></div>`)
+        .join("")}
+      <div class="section-label">${ui.sectionBanned}</div>
       <div class="info-block">
-        <h3>Dupla progressão</h3>
-        <p>Feche o topo da faixa de reps em todas as séries com a mesma carga e RPE certo. Na sessão seguinte, suba o peso. Se não fechar, some reps. Deload (semana 4 de cada bloco): 2 séries, RPE 6.</p>
+        <h3>${ui.bannedTitle}</h3>
+        <p>${L()
+          .banned.map((b) => `• ${b}`)
+          .join("<br>")}</p>
       </div>
-      <div class="section-label">Dados</div>
+      <div class="section-label">${ui.sectionProgress}</div>
       <div class="info-block">
-        <h3>Tudo fica neste iPhone</h3>
-        <p>Conclusões e data de início ficam no Safari/PWA (localStorage). Não passa por servidor. Dieta entra numa versão depois.</p>
+        <h3>${ui.progressTitle}</h3>
+        <p>${ui.progressBody}</p>
       </div>
-      <button class="btn-ghost" type="button" id="btn-reset">Zerar plano e marcações</button>
+      <div class="section-label">${ui.sectionData}</div>
+      <div class="info-block">
+        <h3>${ui.dataTitle}</h3>
+        <p>${ui.dataBody}</p>
+      </div>
+      <button class="btn-ghost" type="button" id="btn-reset">${ui.reset}</button>
     `;
     $("#btn-reset")?.addEventListener("click", resetPlan);
   }
 
   function render() {
+    updateChrome();
     renderHeader();
     if (state.tab === "hoje") renderHoje();
     if (state.tab === "semana") renderSemana();
@@ -441,6 +511,11 @@
   }
 
   document.addEventListener("click", (e) => {
+    const langBtn = e.target.closest("[data-lang]");
+    if (langBtn) {
+      setLang(langBtn.dataset.lang);
+      return;
+    }
     const tab = e.target.closest(".tab");
     if (tab) {
       switchTab(tab.dataset.tab);
@@ -478,5 +553,6 @@
     });
   }
 
+  document.documentElement.lang = lang();
   switchTab("hoje");
 })();
