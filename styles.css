@@ -15,7 +15,7 @@
   --muted2: #555;
   --safe-b: env(safe-area-inset-bottom, 0px);
   --safe-t: env(safe-area-inset-top, 0px);
-  --tab-h: 56px;
+  --tab-h: 52px;
 }
 
 * {
@@ -25,13 +25,20 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-html, body {
+html {
   height: 100%;
+  height: -webkit-fill-available;
+}
+html, body {
   background: var(--bg);
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
   -webkit-text-size-adjust: 100%;
   overflow: hidden;
+}
+body {
+  min-height: 100%;
+  min-height: -webkit-fill-available;
 }
 
 button {
@@ -45,13 +52,25 @@ button {
 #app {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  height: 100dvh;
+  height: 100%;
+  min-height: -webkit-fill-available;
+}
+
+/* iPhone 16 Pro Home Screen: Dynamic Island ~59pt. env() is often 0 until .standalone is set. */
+html.standalone {
+  --safe-t: max(env(safe-area-inset-top, 0px), 59px);
+  --safe-b: max(env(safe-area-inset-bottom, 0px), 34px);
+}
+@media (display-mode: standalone) {
+  :root {
+    --safe-t: max(env(safe-area-inset-top, 0px), 59px);
+    --safe-b: max(env(safe-area-inset-bottom, 0px), 34px);
+  }
 }
 
 /* Header */
 #header {
-  padding: calc(var(--safe-t) + 12px) 18px 12px;
+  padding: calc(var(--safe-t) + 8px) 18px 10px;
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
@@ -133,7 +152,7 @@ button {
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  padding-bottom: calc(var(--tab-h) + var(--safe-b) + 20px);
+  padding-bottom: 16px;
   overscroll-behavior-y: contain;
 }
 #content::-webkit-scrollbar { display: none; }
@@ -594,15 +613,10 @@ button {
 
 /* Bottom tabs */
 #tab-bar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: calc(var(--tab-h) + var(--safe-b));
+  position: relative;
+  flex-shrink: 0;
   padding-bottom: var(--safe-b);
-  background: rgba(14, 14, 14, 0.94);
-  -webkit-backdrop-filter: saturate(140%) blur(16px);
-  backdrop-filter: saturate(140%) blur(16px);
+  background: rgba(14, 14, 14, 0.96);
   border-top: 1px solid var(--border);
   display: flex;
   z-index: 20;

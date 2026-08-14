@@ -800,5 +800,9 @@
   }
 
   document.documentElement.lang = lang();
+  if (window.navigator.standalone === true
+      || window.matchMedia("(display-mode: standalone)").matches) {
+    document.documentElement.classList.add("standalone");
+  }
   switchTab("hoje");
 })();
