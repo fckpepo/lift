@@ -66,9 +66,24 @@ window.LIFT_I18N = {
       sectionData: "Dados",
       dataTitle: "Tudo fica neste iPhone",
       dataBody:
-        "Conclusões e data de início ficam no Safari/PWA (localStorage). Não passa por servidor. Dieta entra numa versão depois.",
+        "Conclusões, cargas e peso na balança ficam no Safari/PWA (localStorage). Não passa por servidor. Dieta entra numa versão depois.",
       reset: "Zerar plano e marcações",
-      resetConfirm: "Zerar o plano? Semana e treinos marcados voltam do zero.",
+      resetConfirm: "Zerar o plano? Semana e treinos marcados voltam do zero. Cargas e balança ficam.",
+      sectionStall: "Por que o visual não muda",
+      stallTitle: "109 semanas sem diferença",
+      stallBody:
+        "Isso quase nunca é falta de tríceps ou de mais um isolador. Se a carga nos compostos não sobe, e a balança fica parada perto de 61 kg, o corpo não acrescenta músculo — ele só se mantém. Anote o peso de cada composto aqui. Feche o topo da faixa, depois suba a carga. Se a média semanal da balança não sobe ao longo do mês, você está em manutenção, não em ganho. A dieta detalhada vem depois; o teste barato é a balança + as cargas.",
+      logWeight: "Carga (kg)",
+      logReps: "Reps",
+      logLast: "Última: {w} kg × {reps}",
+      logEmpty: "Ainda sem carga registrada",
+      logAdd: "Fechou o topo da faixa. Próxima vez, suba a carga.",
+      logKeep: "Some reps até fechar o topo da faixa, aí sobe o peso.",
+      scaleTitle: "Balança",
+      scaleBody: "Uma vez por semana, de manhã. O número que importa é a média de 3–4 semanas, não o dia.",
+      scaleSave: "Salvar peso",
+      scaleNone: "Nenhum registro ainda.",
+      scaleDelta: "4 semanas: {d}",
       mesoWeek: "S{n} · {name}",
       daysShort: ["SEG", "TER", "QUA", "QUI", "SEX", "SÁB", "DOM"],
       daysTiny: ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"],
@@ -87,8 +102,8 @@ window.LIFT_I18N = {
         warmup:
           "4 min. Band pull-aparts 2×12 · face pull leve 1×15 · 1 série leve no supino (50–60%). Sem circuir a academia.",
         notes: [
-          "Teto 45 min. Compostos 3 séries, 2–3 min de descanso. Isoladores curtos. Se atrasar, pule o tríceps — não corte o rest dos compostos.",
-          "Compostos a RPE 7–8 (1–3 reps na reserva). Isoladores a RPE 8–9.",
+          "Teto 45 min com folga de academia. Compostos 3 séries, 2–3 min de descanso. Anote a carga. Não corte o rest.",
+          "Compostos a RPE 7–8 (1–3 reps na reserva). Laterais a RPE 8.",
         ],
         exercises: [
           {
@@ -115,11 +130,6 @@ window.LIFT_I18N = {
             name: "Elevação lateral com halteres",
             sub: "Deltóide medial",
             note: "Cotovelo levemente fletido, sobe até a orelha. Sem balanço. Sub: lateral no cabo.",
-          },
-          {
-            name: "Tríceps pulley (corda)",
-            sub: "Isolador · tríceps",
-            note: "Abra a corda no final. Primeiro a cortar se o relógio apertar. Sub: tríceps testa.",
           },
         ],
       },
@@ -184,7 +194,7 @@ window.LIFT_I18N = {
         warmup:
           "4 min. Face pull leve 1×15 · 1 série leve de pulley · 1 série leve de desenvolvimento.",
         notes: [
-          "Teto 45 min. Sem finisher de cardio neste dia — a Zona 2 é quarta. Se atrasar, pule o tríceps.",
+          "Teto 45 min com folga. Sem cardio neste dia. Anote a carga nos compostos.",
           "Compostos a RPE 7–8. Isoladores a RPE 8–9.",
         ],
         exercises: [
@@ -218,11 +228,6 @@ window.LIFT_I18N = {
             sub: "Bíceps · alongado",
             note: "Banco 45–60°, braço atrás do tronco. Sem balanço. Sub: rosca no cabo baixo.",
           },
-          {
-            name: "Tríceps acima da cabeça",
-            sub: "Cabeça longa",
-            note: "Cotovelo quieto. Primeiro a cortar se o relógio apertar. Sub: pulley acima da cabeça.",
-          },
         ],
       },
       "lower-b": {
@@ -249,11 +254,6 @@ window.LIFT_I18N = {
             name: "Leg curl sentado",
             sub: "Isquios alongados",
             note: "Quadril flexionado = melhor estímulo de isquio. Sub: curl deitado.",
-          },
-          {
-            name: "Extensão lombar 45° ou pull-through",
-            sub: "Cadeia posterior",
-            note: "Dobradiça de quadril. Primeiro a cortar se o relógio apertar. Sub: good morning leve.",
           },
           {
             name: "Panturrilha sentado",
@@ -320,7 +320,7 @@ window.LIFT_I18N = {
     why: [
       {
         t: "Por que 4 musculações + 1 cardio, em 45 min",
-        d: "O descanso de 2–3 min nos compostos ficou. O que saiu foi série extra e exercício extra. Terça é quad, sexta é posterior — o RDL não compete com o Hack no mesmo relógio. Semanalmente ainda dá ~9–10 séries duras nos músculos principais.",
+        d: "O descanso de 2–3 min nos compostos ficou. Isoladores de tríceps e o hinge extra saíram para caber numa academia de verdade, não só no papel. Terça é quad, sexta é posterior. Semanalmente ainda dá ~8–10 séries duras nos músculos principais — o bastante se a carga sobe.",
       },
       {
         t: "O que a ciência está dizendo (2024–2026)",
@@ -404,9 +404,24 @@ window.LIFT_I18N = {
       sectionData: "Data",
       dataTitle: "Stays on this iPhone",
       dataBody:
-        "Completions and the start date live in Safari/PWA localStorage. Nothing is sent to a server. Nutrition comes in a later version.",
+        "Completions, lift loads, and scale weight live in Safari/PWA localStorage. Nothing is sent to a server. Nutrition comes in a later version.",
       reset: "Reset plan and checkmarks",
-      resetConfirm: "Reset the plan? Week number and logged sessions go back to zero.",
+      resetConfirm: "Reset the plan? Week number and logged sessions go back to zero. Lift loads and scale stay.",
+      sectionStall: "Why the physique is not changing",
+      stallTitle: "109 weeks, almost no difference",
+      stallBody:
+        "That is almost never a missing triceps movement. If the load on the compounds is not going up, and the scale is stuck around 61 kg, your body has no reason to add muscle — it is just maintaining. Log every compound here. Hit the top of the rep range, then add weight. If your weekly scale average does not rise across a month, you are at maintenance, not in a surplus. The meal plan comes later; the cheap test is the scale plus the loads.",
+      logWeight: "Load (kg)",
+      logReps: "Reps",
+      logLast: "Last: {w} kg × {reps}",
+      logEmpty: "No load logged yet",
+      logAdd: "You owned the top of the range. Add weight next time.",
+      logKeep: "Add reps until you own the top of the range, then add load.",
+      scaleTitle: "Scale",
+      scaleBody: "Once a week, morning. The number that matters is the 3–4 week average, not the day.",
+      scaleSave: "Save weight",
+      scaleNone: "No entries yet.",
+      scaleDelta: "4 weeks: {d}",
       mesoWeek: "W{n} · {name}",
       daysShort: ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"],
       daysTiny: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
@@ -425,8 +440,8 @@ window.LIFT_I18N = {
         warmup:
           "4 min. Band pull-aparts 2×12 · light face pull 1×15 · 1 light bench set (50–60%). Stay at the first station.",
         notes: [
-          "45-minute cap. Compounds are 3 sets with 2–3 min rest. Isolations stay short. If you are running late, skip triceps — do not cut compound rest.",
-          "Compounds at RPE 7–8 (1–3 reps in reserve). Isolations at RPE 8–9.",
+          "45-minute cap with gym slack. Compounds are 3 sets, 2–3 min rest. Log the load. Do not cut rest.",
+          "Compounds at RPE 7–8 (1–3 reps in reserve). Laterals at RPE 8.",
         ],
         exercises: [
           {
@@ -453,11 +468,6 @@ window.LIFT_I18N = {
             name: "Dumbbell lateral raise",
             sub: "Side delts",
             note: "Soft elbows, raise to ear height. No swing. Swap: cable lateral raise.",
-          },
-          {
-            name: "Rope pressdown",
-            sub: "Isolation · triceps",
-            note: "Spread the rope at the bottom. First thing to drop if the clock is tight. Swap: skull crusher.",
           },
         ],
       },
@@ -522,7 +532,7 @@ window.LIFT_I18N = {
         warmup:
           "4 min. Light face pull 1×15 · 1 light pulldown · 1 light overhead press.",
         notes: [
-          "45-minute cap. No cardio finisher today — Zone 2 is Wednesday. If you are late, skip triceps.",
+          "45-minute cap with slack. No cardio today. Log the load on the compounds.",
           "Compounds at RPE 7–8. Isolations at RPE 8–9.",
         ],
         exercises: [
@@ -556,11 +566,6 @@ window.LIFT_I18N = {
             sub: "Biceps · long head stretched",
             note: "Bench 45–60°, arm hanging behind the torso. No swing. Swap: low-cable curl.",
           },
-          {
-            name: "Overhead triceps extension",
-            sub: "Long head",
-            note: "Elbows still. First thing to drop if the clock is tight. Swap: overhead cable extension.",
-          },
         ],
       },
       "lower-b": {
@@ -587,11 +592,6 @@ window.LIFT_I18N = {
             name: "Seated leg curl",
             sub: "Hamstrings at long length",
             note: "Hips flexed — usually a better hamstring stimulus than the lying curl. Swap: lying leg curl.",
-          },
-          {
-            name: "45° back extension or cable pull-through",
-            sub: "Posterior chain",
-            note: "Hip hinge, not a reverse sit-up. First thing to drop if the clock is tight. Swap: light good morning.",
           },
           {
             name: "Seated calf raise",
@@ -658,7 +658,7 @@ window.LIFT_I18N = {
     why: [
       {
         t: "Why 4 lifts + 1 cardio, in 45 minutes",
-        d: "The 2–3 min compound rests stayed. Extra sets and extra movements left. Tuesday is quads, Friday is posterior — the RDL does not fight the Hack for the same clock. You still get about 9–10 hard sets per main muscle each week.",
+        d: "The 2–3 min compound rests stayed. Direct triceps and the extra Friday hinge left so this fits a real gym, not just a spreadsheet. Tuesday is quads, Friday is posterior. You still get about 8–10 hard sets on the main muscles — enough if the load is going up.",
       },
       {
         t: "What the 2024–2026 research actually says",

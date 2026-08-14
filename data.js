@@ -32,7 +32,6 @@ window.LIFT_DATA = {
         { num: "C1", sets: 3, reps: "8–12", rest: "2 min", rpe: "8" },
         { num: "D1", sets: 3, reps: "8–12", rest: "90s–2 min", rpe: "8" },
         { num: "E1", sets: 3, reps: "12–20", rest: "60s", rpe: "8" },
-        { num: "F1", sets: 2, reps: "10–15", rest: "60s", rpe: "8–9" },
       ],
     },
     "lower-a": {
@@ -63,11 +62,10 @@ window.LIFT_DATA = {
       exercises: [
         { num: "A1", sets: 3, reps: "5–8", rest: "2–3 min", rpe: "7–8" },
         { num: "B1", sets: 3, reps: "8–12", rest: "2 min", rpe: "8" },
-        { num: "C1", sets: 3, reps: "10–15", rest: "90s", rpe: "8–9" },
+        { num: "C1", sets: 2, reps: "10–15", rest: "90s", rpe: "8–9" },
         { num: "D1", sets: 2, reps: "15–20", rest: "60s", rpe: "7" },
         { num: "E1", sets: 3, reps: "12–20", rest: "60s", rpe: "8" },
         { num: "F1", sets: 3, reps: "8–12", rest: "90s", rpe: "8–9" },
-        { num: "G1", sets: 2, reps: "10–15", rest: "75s", rpe: "8" },
       ],
     },
     "lower-b": {
@@ -79,8 +77,7 @@ window.LIFT_DATA = {
         { num: "A1", sets: 4, reps: "8–12", rest: "2–3 min", rpe: "8" },
         { num: "B1", sets: 3, reps: "8–10", rest: "2–3 min", rpe: "7–8" },
         { num: "C1", sets: 3, reps: "10–15", rest: "90s", rpe: "8–9" },
-        { num: "D1", sets: 2, reps: "10–15", rest: "90s", rpe: "8" },
-        { num: "E1", sets: 3, reps: "12–20", rest: "60s", rpe: "8" },
+        { num: "D1", sets: 3, reps: "12–20", rest: "60s", rpe: "8" },
       ],
     },
   },

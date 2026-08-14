@@ -20,6 +20,8 @@
         startMonday: parsed.startMonday || null,
         completions: parsed.completions || {},
         lang: parsed.lang === "en" ? "en" : "pt-BR",
+        lifts: parsed.lifts && typeof parsed.lifts === "object" ? parsed.lifts : {},
+        scale: Array.isArray(parsed.scale) ? parsed.scale : [],
       };
     } catch {
       return emptyStore();
@@ -27,7 +29,7 @@
   }
 
   function emptyStore() {
-    return { startMonday: null, completions: {}, lang: "pt-BR" };
+    return { startMonday: null, completions: {}, lang: "pt-BR", lifts: {}, scale: [] };
   }
 
   function saveStore() {
@@ -179,10 +181,62 @@
   function resetPlan() {
     if (!confirm(L().ui.resetConfirm)) return;
     const keepLang = lang();
+    const lifts = state.store.lifts || {};
+    const scale = state.store.scale || [];
     state.store = emptyStore();
     state.store.lang = keepLang;
+    state.store.lifts = lifts;
+    state.store.scale = scale;
     saveStore();
     render();
+  }
+
+  function liftKey(sessionKey, num) {
+    return `${sessionKey}-${num}`;
+  }
+
+  function getLift(key) {
+    return (state.store.lifts || {})[key] || null;
+  }
+
+  function saveLift(key, entry) {
+    if (!state.store.lifts) state.store.lifts = {};
+    state.store.lifts[key] = entry;
+    saveStore();
+  }
+
+  function parseRepHi(reps) {
+    const m = String(reps).replace("–", "-").match(/(\d+)\s*-\s*(\d+)/);
+    return m ? Number(m[2]) : null;
+  }
+
+  function latestScale() {
+    const rows = state.store.scale || [];
+    if (!rows.length) return null;
+    return rows[rows.length - 1];
+  }
+
+  function scaleDelta() {
+    const rows = state.store.scale || [];
+    if (rows.length < 2) return null;
+    const last = rows[rows.length - 1];
+    const cutoff = isoToDate(last.d);
+    cutoff.setUTCDate(cutoff.getUTCDate() - 28);
+    const older = [...rows].reverse().find((r) => isoToDate(r.d) <= cutoff) || rows[0];
+    return last.kg - older.kg;
+  }
+
+  function saveScale(kg) {
+    const n = Number(String(kg).replace(",", "."));
+    if (!Number.isFinite(n) || n < 30 || n > 250) return false;
+    if (!state.store.scale) state.store.scale = [];
+    const d = todayISO();
+    const i = state.store.scale.findIndex((r) => r.d === d);
+    const row = { d, kg: Math.round(n * 10) / 10 };
+    if (i >= 0) state.store.scale[i] = row;
+    else state.store.scale.push(row);
+    saveStore();
+    return true;
   }
 
   function setsFor(ex, mesoWeek) {
@@ -224,7 +278,9 @@
       chip.innerHTML = `<span class="w-num">${fill(ui.weekN, { n: info.planWeek })}</span><span class="w-sub">${fill(ui.blockMeso, { b: info.block, name: meso.name })}</span>`;
     }
     const p = D.profile;
-    $("#brand-sub").textContent = `${p.weightKg} kg · ${p.heightCm} cm · ~${p.bfPct}% · ${ui.level}`;
+    const scale = latestScale();
+    const kg = scale ? scale.kg : p.weightKg;
+    $("#brand-sub").textContent = `${kg} kg · ${p.heightCm} cm · ~${p.bfPct}% · ${ui.level}`;
   }
 
   /* ── session view ── */
@@ -280,6 +336,7 @@
     }
 
     ses.exercises.forEach((ex, i) => {
+      const nSets = info.mesoWeek === 4 ? Math.min(2, ex.sets) : ex.sets;
       html += `
         <div class="ex-card${ex.knee ? " knee" : ""}" data-ex="${i}">
           <button class="ex-head" type="button">
@@ -298,6 +355,7 @@
               ${ex.knee ? `<span class="pill">${ui.kneePill}</span>` : ""}
             </div>
             <div class="ex-note">${ex.note}</div>
+            ${ses.kind === "lift" ? liftLogHtml(ses.key, ex, nSets, ui) : ""}
           </div>
         </div>`;
     });
@@ -312,6 +370,63 @@
       </div>`;
 
     container.innerHTML = html;
+  }
+
+  function liftLogHtml(sessionKey, ex, nSets, ui) {
+    const key = liftKey(sessionKey, ex.num);
+    const last = getLift(key);
+    const hi = parseRepHi(ex.reps);
+    const lastLine = last
+      ? fill(ui.logLast, { w: last.weight, reps: (last.reps || []).filter((r) => r !== "").join(", ") })
+      : ui.logEmpty;
+    const w = last && last.weight != null ? last.weight : "";
+    const reps = last && Array.isArray(last.reps) ? last.reps : [];
+    const inputs = Array.from({ length: nSets }, (_, i) => {
+      const v = reps[i] != null ? reps[i] : "";
+      return `<input class="rep-in" inputmode="numeric" pattern="[0-9]*" data-rep="${i}" value="${v}" aria-label="${ui.logReps} ${i + 1}">`;
+    }).join("");
+    let hint = "";
+    if (last && hi && last.reps && last.reps.length) {
+      const owned = last.reps.filter((r) => r !== "" && Number(r) >= hi).length === last.reps.length
+        && last.reps.length >= nSets;
+      hint = owned ? ui.logAdd : ui.logKeep;
+    }
+    return `
+      <div class="lift-log" data-lift="${key}" data-sets="${nSets}" data-hi="${hi || ""}">
+        <div class="lift-last">${lastLine}</div>
+        <label class="lift-w">${ui.logWeight}
+          <input class="w-in" inputmode="decimal" data-field="weight" value="${w}">
+        </label>
+        <div class="rep-lab">${ui.logReps}</div>
+        <div class="rep-row">${inputs}</div>
+        ${hint ? `<p class="lift-hint">${hint}</p>` : ""}
+      </div>`;
+  }
+
+  function persistLiftBox(box) {
+    const key = box.dataset.lift;
+    const wRaw = box.querySelector("[data-field=weight]")?.value || "";
+    const weight = Number(String(wRaw).replace(",", "."));
+    const reps = [...box.querySelectorAll("[data-rep]")].map((el) => {
+      const n = Number(el.value);
+      return Number.isFinite(n) && n > 0 ? n : "";
+    });
+    if (!Number.isFinite(weight) || weight <= 0) return;
+    saveLift(key, { weight, reps, at: todayISO() });
+    const last = box.querySelector(".lift-last");
+    const ui = L().ui;
+    if (last) last.textContent = fill(ui.logLast, { w: weight, reps: reps.filter((r) => r !== "").join(", ") });
+    const hi = Number(box.dataset.hi);
+    let hint = box.querySelector(".lift-hint");
+    const filled = reps.filter((r) => r !== "");
+    const owned = hi && filled.length === Number(box.dataset.sets) && filled.every((r) => Number(r) >= hi);
+    const text = owned ? ui.logAdd : ui.logKeep;
+    if (!hint) {
+      hint = document.createElement("p");
+      hint.className = "lift-hint";
+      box.appendChild(hint);
+    }
+    hint.textContent = filled.length ? text : "";
   }
 
   function renderCardioBlock(meso, ses) {
@@ -462,6 +577,21 @@
         <p class="lang-hint">${ui.langHint}</p>
       </div>
       ${standalone ? "" : `<div class="install"><strong>${ui.installTitle}</strong> ${ui.installBody}</div>`}
+      <div class="section-label">${ui.sectionStall}</div>
+      <div class="info-block">
+        <h3>${ui.stallTitle}</h3>
+        <p>${ui.stallBody}</p>
+      </div>
+      <div class="section-label">${ui.scaleTitle}</div>
+      <div class="info-block">
+        <h3>${ui.scaleTitle}</h3>
+        <p>${ui.scaleBody}</p>
+        <div class="scale-row">
+          <input id="scale-kg" class="w-in" inputmode="decimal" placeholder="${latestScale() ? latestScale().kg : D.profile.weightKg}" aria-label="${ui.scaleTitle}">
+          <button type="button" class="btn-scale" data-save-scale>${ui.scaleSave}</button>
+        </div>
+        <p class="lang-hint">${scaleSummary(ui)}</p>
+      </div>
       <div class="section-label">${ui.sectionWeek}</div>
       <div class="info-block">
         <h3>${ui.weekHowTitle}</h3>
@@ -493,6 +623,15 @@
     $("#btn-reset")?.addEventListener("click", resetPlan);
   }
 
+  function scaleSummary(ui) {
+    const rows = state.store.scale || [];
+    if (!rows.length) return ui.scaleNone;
+    const last = rows[rows.length - 1];
+    const dlt = scaleDelta();
+    const signed = dlt == null ? "—" : `${dlt > 0 ? "+" : ""}${dlt.toFixed(1)} kg`;
+    return `${last.d} · ${last.kg} kg · ${fill(ui.scaleDelta, { d: signed })}`;
+  }
+
   function render() {
     updateChrome();
     renderHeader();
@@ -510,7 +649,17 @@
     render();
   }
 
+  document.addEventListener("change", (e) => {
+    const box = e.target.closest("[data-lift]");
+    if (box) persistLiftBox(box);
+  });
+
   document.addEventListener("click", (e) => {
+    if (e.target.closest("[data-save-scale]")) {
+      const ok = saveScale($("#scale-kg")?.value);
+      if (ok) render();
+      return;
+    }
     const langBtn = e.target.closest("[data-lang]");
     if (langBtn) {
       setLang(langBtn.dataset.lang);
