@@ -64,13 +64,16 @@ button {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-width: 0;
+  flex: 1;
 }
 
 .brand-name {
   font-size: 26px;
   font-weight: 800;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.08em;
   line-height: 1;
+  white-space: nowrap;
 }
 .brand-name span { color: var(--accent); }
 
@@ -85,6 +88,8 @@ button {
 .week-chip {
   text-align: right;
   min-height: 44px;
+  max-width: 46%;
+  flex-shrink: 0;
   padding: 6px 12px;
   border-radius: 14px;
   background: var(--accent-dim);
@@ -603,7 +608,8 @@ button {
   z-index: 20;
 }
 .tab {
-  flex: 1;
+  flex: 1 1 0;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -611,12 +617,22 @@ button {
   gap: 3px;
   color: var(--muted2);
   min-height: var(--tab-h);
+  padding: 6px 0 4px;
+  -webkit-appearance: none;
+  appearance: none;
 }
-.tab svg { width: 22px; height: 22px; }
+.tab svg {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  overflow: visible;
+  display: block;
+}
 .tab span {
   font-size: 9px;
   font-weight: 600;
   letter-spacing: 0.02em;
+  white-space: nowrap;
 }
 
 .kcal-unit {

@@ -320,7 +320,7 @@
         <p>${ses.warmup}</p>
       </div>
       <div class="callout amber">
-        <div class="c-label">${fill(ui.weekChip, { n: info.started ? info.planWeek : "—", name: meso.name })}</div>
+        <div class="c-label">${info.started ? fill(ui.weekChip, { n: info.planWeek, name: meso.name }) : ui.weekPending}</div>
         <p>${meso.liftNote}</p>
       </div>`;
 
