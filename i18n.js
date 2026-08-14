@@ -362,7 +362,7 @@ window.LIFT_I18N = {
         { t: "13:00", d: "Caminhada 5 min no sol → treino / Zona 2 → 5 min de volta." },
         { t: "14:00", d: "Banana + aveia no prato. Carnibol no copo. Aí o trabalho." },
         { t: "16:00", d: "Almoço. Prato inteiro." },
-        { t: "22:00", d: "Jantar. Não reduz porque é tarde. 21h se der." },
+        { t: "21:00", d: "Jantar. Preferir 21h (4 h antes de dormir). 22h só se o trabalho atrasar. Não reduz o prato." },
         { t: "00:15", d: "Multi + melatonina 5 mg. Dorme 1:00." },
       ],
       meals: [
@@ -409,7 +409,7 @@ window.LIFT_I18N = {
         },
         {
           id: "dinner",
-          time: "22:00",
+          time: "21:00",
           title: "Jantar",
           kcal: "igual ao almoço",
           items: [
@@ -418,7 +418,7 @@ window.LIFT_I18N = {
             { name: "Patinho ou peito de frango", qty: "150 g cru" },
             { name: "Manteiga + azeite", qty: "15 g no preparo" },
           ],
-          note: "Mesmo prato. Carne crua na balança. Não corta porque é noite.",
+          note: "Mesmo prato. Carne crua na balança. Preferir 21:00. Se precisar dos 40 g extra de arroz, metade aqui e metade no almoço.",
         },
       ],
       supps: [
@@ -432,8 +432,8 @@ window.LIFT_I18N = {
         "A caminhada de 5 min no sol até a academia já conta. Depois do treino, se der, mais 10 min.",
         "Não espera fome. Marca no app depois que comer.",
         "Balança de manhã, 3–4× por semana. Alvo +0,2–0,3 kg na média semanal.",
-        "Com 150 g de carne crua o dia fica ~2.460–2.520 kcal — ainda ~150–250 abaixo do alvo. 2 semanas plana: +80 g de arroz já cozido no jantar. Sem segunda dose de Carnibol.",
-        "Sobe mais que ~0,4 kg/semana por 2 semanas: tira os 80 g de arroz.",
+        "Com 150 g de carne crua o dia fica ~2.460–2.520 kcal — ainda ~150–250 abaixo do alvo. 2 semanas plana: +40 g de arroz já cozido no almoço e +40 g no jantar (não 80 g só à noite). Sem segunda dose de Carnibol.",
+        "Sobe mais que ~0,4 kg/semana por 2 semanas: tira esses 40 g + 40 g de arroz.",
       ],
     },
   },
@@ -801,7 +801,7 @@ window.LIFT_I18N = {
         { t: "13:00", d: "5 min walk in the sun → lift / Zone 2 → 5 min walk back." },
         { t: "14:00", d: "Banana + oats on a plate. Carnibol in a glass. Then work." },
         { t: "16:00", d: "Lunch. Full plate." },
-        { t: "22:00", d: "Dinner. Do not shrink it because it is late. 21:00 if you can." },
+        { t: "21:00", d: "Dinner. Prefer 21:00 (4 h before bed). 22:00 only if work runs late. Do not shrink the plate." },
         { t: "00:15", d: "Multi + 5 mg melatonin. Sleep at 1:00." },
       ],
       meals: [
@@ -848,7 +848,7 @@ window.LIFT_I18N = {
         },
         {
           id: "dinner",
-          time: "22:00",
+          time: "21:00",
           title: "Dinner",
           kcal: "same as lunch",
           items: [
@@ -857,7 +857,7 @@ window.LIFT_I18N = {
             { name: "Inside-round beef or chicken breast", qty: "150 g raw" },
             { name: "Butter + olive oil", qty: "15 g in the pan" },
           ],
-          note: "Same plate. Meat is weighed raw. Do not cut it because it is late.",
+          note: "Same plate. Meat is weighed raw. Prefer 21:00. If you add the extra rice, put 40 g here and 40 g at lunch.",
         },
       ],
       supps: [
@@ -871,7 +871,7 @@ window.LIFT_I18N = {
         "The 5 min sunny walk to the gym already counts. Another 10 min after training if you can.",
         "Do not wait for hunger. Check the meal off after you eat it.",
         "Scale in the morning, 3–4× a week. Target +0.2–0.3 kg on the weekly average.",
-        "With 150 g raw meat the day lands ~2,460–2,520 kcal — still ~150–250 short of the target. 2 weeks flat: +80 g cooked rice at dinner. Not a second Carnibol scoop.",
+        "With 150 g raw meat the day lands ~2,460–2,520 kcal — still ~150–250 short of the target. 2 weeks flat: +40 g cooked rice at lunch and +40 g at dinner (not 80 g only at night). Not a second Carnibol scoop.",
         "Faster than ~0.4 kg/week for 2 weeks: take the extra rice back out.",
       ],
     },
