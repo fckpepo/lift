@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="LIFT" />
+  <meta name="description" content="Hipertrofia + Zona 2. Plano de treino PWA." />
+  <title>LIFT</title>
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32.png" />
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div id="app">
+    <header id="header">
+      <div class="brand">
+        <div class="brand-name">LI<span>FT</span></div>
+        <div class="brand-sub" id="brand-sub">61 kg · 163 cm</div>
+      </div>
+      <div id="week-chip" class="week-chip idle">
+        <span class="w-num">Não iniciado</span>
+        <span class="w-sub">marque o 1º treino</span>
+      </div>
+    </header>
+
+    <main id="content">
+      <section id="panel-hoje" class="panel active"></section>
+      <section id="panel-semana" class="panel"></section>
+      <section id="panel-cardio" class="panel"></section>
+      <section id="panel-guia" class="panel"></section>
+    </main>
+
+    <nav id="tab-bar">
+      <button class="tab active" type="button" data-tab="hoje">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 8h16M4 16h10" />
+          <circle cx="18.5" cy="16" r="2.2" />
+        </svg>
+        <span>Hoje</span>
+      </button>
+      <button class="tab" type="button" data-tab="semana">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3.5" y="5" width="17" height="15" rx="2" />
+          <path d="M8 3.5v3M16 3.5v3M3.5 10h17" />
+        </svg>
+        <span>Semana</span>
+      </button>
+      <button class="tab" type="button" data-tab="cardio">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 13h3l2-5 3 10 2-5h6" />
+        </svg>
+        <span>Cardio</span>
+      </button>
+      <button class="tab" type="button" data-tab="guia">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="8.5" />
+          <path d="M12 11v6M12 8h.01" />
+        </svg>
+        <span>Guia</span>
+      </button>
+    </nav>
+  </div>
+  <script src="./data.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
