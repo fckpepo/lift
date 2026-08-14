@@ -70,9 +70,9 @@ window.LIFT_I18N = {
       reset: "Zerar plano e marcações",
       resetConfirm: "Zerar o plano? Semana e treinos marcados voltam do zero. Cargas e balança ficam.",
       sectionStall: "Por que o visual não muda",
-      stallTitle: "109 semanas sem diferença",
+      stallTitle: "O visual já mudou — o próximo passo é tamanho",
       stallBody:
-        "Isso quase nunca é falta de tríceps ou de mais um isolador. Se a carga nos compostos não sobe, e a balança fica parada perto de 61 kg, o corpo não acrescenta músculo — ele só se mantém. Anote o peso de cada composto aqui. Feche o topo da faixa, depois suba a carga. Se a média semanal da balança não sobe ao longo do mês, você está em manutenção, não em ganho. A dieta detalhada vem depois; o teste barato é a balança + as cargas.",
+        "Você já mudou composição: 65 kg inchado → ~58 kg bem seco → 62.45 kg mais magro que o início. O que falta agora não é mais isolador, é surplus lento em cima desse visual. Anote os compostos. Se a média da balança não sobe no mês, você está só mantendo o 62.45.",
       logWeight: "Carga (kg)",
       logReps: "Reps",
       logLast: "Última: {w} kg × {reps}",
@@ -408,9 +408,9 @@ window.LIFT_I18N = {
       reset: "Reset plan and checkmarks",
       resetConfirm: "Reset the plan? Week number and logged sessions go back to zero. Lift loads and scale stay.",
       sectionStall: "Why the physique is not changing",
-      stallTitle: "109 weeks, almost no difference",
+      stallTitle: "The look already changed — next is size",
       stallBody:
-        "That is almost never a missing triceps movement. If the load on the compounds is not going up, and the scale is stuck around 61 kg, your body has no reason to add muscle — it is just maintaining. Log every compound here. Hit the top of the rep range, then add weight. If your weekly scale average does not rise across a month, you are at maintenance, not in a surplus. The meal plan comes later; the cheap test is the scale plus the loads.",
+        "Composition already changed: 65 kg bloated → ~58 kg very lean → 62.45 kg leaner than the start. What is missing now is not another isolation — it is a slow surplus on top of this look. Log the compounds. If the weekly scale average does not rise for a month, you are only holding 62.45.",
       logWeight: "Load (kg)",
       logReps: "Reps",
       logLast: "Last: {w} kg × {reps}",

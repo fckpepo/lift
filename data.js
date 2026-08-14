@@ -2,7 +2,7 @@
 window.LIFT_DATA = {
   profile: {
     name: "Pedro",
-    weightKg: 61,
+    weightKg: 62.45,
     heightCm: 163,
     bfPct: 12,
     age: 28,
