@@ -1,4 +1,4 @@
-const CACHE = "lift-v12";
+const CACHE = "lift-v13";
 const ASSETS = [
   "./",
   "./index.html",
@@ -9,8 +9,13 @@ const ASSETS = [
   "./manifest.json",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
+  "./icons/icon-light-192.png",
+  "./icons/icon-light-512.png",
+  "./icons/icon-tinted-512.png",
   "./icons/icon-maskable-512.png",
   "./icons/apple-touch-icon.png",
+  "./icons/apple-touch-icon-dark.png",
+  "./icons/apple-touch-icon-tinted.png",
   "./icons/favicon-32.png",
 ];
 
