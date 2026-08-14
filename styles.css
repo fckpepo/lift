@@ -13,8 +13,8 @@
   --text: #f0f0f0;
   --muted: #888;
   --muted2: #555;
-  --safe-b: env(safe-area-inset-bottom, 0px);
-  --safe-t: env(safe-area-inset-top, 0px);
+  --safe-b: 0px;
+  --safe-t: 0px;
   --tab-h: 52px;
 }
 
@@ -25,20 +25,16 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-html {
-  height: 100%;
-  height: -webkit-fill-available;
-}
 html, body {
   background: var(--bg);
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
   -webkit-text-size-adjust: 100%;
   overflow: hidden;
-}
-body {
-  min-height: 100%;
-  min-height: -webkit-fill-available;
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
 button {
@@ -50,27 +46,22 @@ button {
 }
 
 #app {
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
-  height: 100%;
-  min-height: -webkit-fill-available;
+  overflow: hidden;
 }
 
-/* iPhone 16 Pro Home Screen: Dynamic Island ~59pt. env() is often 0 until .standalone is set. */
+/* Home Screen: iOS draws a black status bar (not overlay). Only pad the home indicator. */
 html.standalone {
-  --safe-t: max(env(safe-area-inset-top, 0px), 59px);
-  --safe-b: max(env(safe-area-inset-bottom, 0px), 34px);
-}
-@media (display-mode: standalone) {
-  :root {
-    --safe-t: max(env(safe-area-inset-top, 0px), 59px);
-    --safe-b: max(env(safe-area-inset-bottom, 0px), 34px);
-  }
+  --safe-t: 0px;
+  --safe-b: 34px;
 }
 
 /* Header */
 #header {
-  padding: calc(var(--safe-t) + 8px) 18px 10px;
+  padding: 12px 18px 10px;
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
@@ -148,7 +139,8 @@ html.standalone {
 
 /* Content */
 #content {
-  flex: 1;
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
