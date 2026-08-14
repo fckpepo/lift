@@ -783,7 +783,7 @@ window.LIFT_I18N = {
         { k: "Protein", v: "130–150 g" },
         { k: "Water", v: "2.5–3 L" },
         { k: "Chicken", v: "~2,575 kcal" },
-        { k: "Patinho", v: "~2,755 kcal" },
+        { k: "Beef round", v: "~2,755 kcal" },
       ],
       sectionClock: "Clock",
       sectionMeals: "What to eat",
@@ -813,7 +813,7 @@ window.LIFT_I18N = {
           items: [
             { name: "Black coffee, no sugar", qty: "350 ml", how: "drink" },
             { name: "Creatine (in the coffee)", qty: "5–6 g", how: "drink" },
-            { name: "Pão francês", qty: "2 rolls (~50 g each)" },
+            { name: "French roll", qty: "2 rolls (~50 g each)" },
             { name: "Mayo", qty: "15 g on each roll" },
             { name: "Processed mozzarella", qty: "1 slice (~20 g)" },
             { name: "Ham", qty: "1 slice (~20 g)" },
@@ -841,10 +841,10 @@ window.LIFT_I18N = {
           items: [
             { name: "Cooked white rice", qty: "250 g" },
             { name: "Cooked pinto beans", qty: "100 g" },
-            { name: "Patinho or chicken breast", qty: "150 g" },
+            { name: "Inside-round beef or chicken breast", qty: "150 g" },
             { name: "Butter + olive oil", qty: "15 g in the pan" },
           ],
-          note: "Chicken ~755 kcal · patinho ~845. Full plate even with no hunger.",
+          note: "Chicken ~755 kcal · beef round ~845. Full plate even with no hunger.",
         },
         {
           id: "dinner",
@@ -854,7 +854,7 @@ window.LIFT_I18N = {
           items: [
             { name: "Cooked white rice", qty: "250 g" },
             { name: "Cooked pinto beans", qty: "100 g" },
-            { name: "Patinho or chicken breast", qty: "150 g" },
+            { name: "Inside-round beef or chicken breast", qty: "150 g" },
             { name: "Butter + olive oil", qty: "15 g in the pan" },
           ],
           note: "Same plate. Do not cut it because it is late.",
