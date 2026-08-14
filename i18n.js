@@ -39,7 +39,7 @@ window.LIFT_I18N = {
       cardioWhere1:
         "Quarta é o único dia de cardio no relógio. 40 min na bike, sessão inteira ≤45. Sem musculação.",
       cardioWhere2:
-        "Seg / ter / qui / sex são só musculação, 45 min. Sem finisher de cardio — não cabe com rest de 2–3 min.",
+        "Seg / ter / qui / sex são só musculação, 45 min. Sem cardio extra no fim — não cabe com 2–3 min de descanso.",
       cardioWhere3: "Fim de semana não é prioridade. Se sobrar energia, caminhada. Sem corrida.",
       zoneLine: "Zona 2 · FCmáx {hr}",
       zoneMath:
@@ -103,7 +103,7 @@ window.LIFT_I18N = {
         warmup:
           "4 min. Band pull-aparts 2×12 · face pull leve 1×15 · 1 série leve no supino (50–60%). Sem circuir a academia.",
         notes: [
-          "Teto 45 min com folga de academia. Compostos 3 séries, 2–3 min de descanso. Anote a carga. Não corte o rest.",
+          "Teto 45 min com folga de academia. Compostos 3 séries, 2–3 min de descanso. Anote a carga. Não corte o descanso.",
           "Compostos a RPE 7–8 (1–3 reps na reserva). Laterais a RPE 8.",
         ],
         exercises: [
@@ -158,7 +158,7 @@ window.LIFT_I18N = {
           {
             name: "Cadeira extensora",
             sub: "Isolador · quadríceps",
-            note: "Amplitude dolorosa = amplitude errada. Sem carga máxima no lockout se pinçar na frente do joelho.",
+            note: "Amplitude dolorosa = amplitude errada. Sem carga máxima no final do movimento se pinçar na frente do joelho.",
           },
           {
             name: "Leg curl deitado",
@@ -314,14 +314,14 @@ window.LIFT_I18N = {
       "Agachamento no Smith",
       "Afundo / passada / búlgaro",
       "Corrida e sprint na esteira",
-      "Pulo, box jump, corda",
-      "Extensora pesada em lockout se pinçar o joelho",
+      "Pulo, salto no caixote, corda",
+      "Extensora pesada no final do movimento se pinçar o joelho",
       "Terra convencional toda semana (fadiga > hipertrofia neste bloco)",
     ],
     why: [
       {
         t: "Por que 4 musculações + 1 cardio, em 45 min",
-        d: "O descanso de 2–3 min nos compostos ficou. Isoladores de tríceps e o hinge extra saíram para caber numa academia de verdade, não só no papel. Terça é quad, sexta é posterior. Semanalmente ainda dá ~8–10 séries duras nos músculos principais — o bastante se a carga sobe.",
+        d: "O descanso de 2–3 min nos compostos ficou. Isoladores de tríceps e a dobradiça extra de sexta saíram para caber numa academia de verdade, não só no papel. Terça é quad, sexta é posterior. Semanalmente ainda dá ~8–10 séries duras nos músculos principais — o bastante se a carga sobe.",
       },
       {
         t: "O que a ciência está dizendo (2024–2026)",
@@ -329,7 +329,7 @@ window.LIFT_I18N = {
       },
       {
         t: "Zona 2 e VO₂",
-        d: "A dose de cardio do plano é a quarta (40 min, teto 45). Quinta não tem mais finisher — não cabia. Semana 3 de cada bloco: intervalos curtos na bike. Sem corrida.",
+        d: "A dose de cardio do plano é a quarta (40 min, teto 45). Quinta não tem mais cardio extra no fim — não cabia. Semana 3 de cada bloco: intervalos curtos na bike. Sem corrida.",
       },
       {
         t: "Joelho",
@@ -355,7 +355,7 @@ window.LIFT_I18N = {
       mark: "Marquei",
       marked: "Feito",
       howEat: "Come. Não vai no liquidificador.",
-      howDrink: "Mistura em água e bebe. Sem blender.",
+      howDrink: "Mistura em água e bebe. Sem liquidificador.",
       clock: [
         { t: "9:00", d: "Puran. Só água. Levanta da cama. Luz." },
         { t: "11:00", d: "Café da manhã. Café + creatina 5–6 g neste copo." },
@@ -388,11 +388,11 @@ window.LIFT_I18N = {
           title: "Pós-treino",
           kcal: "~325 kcal",
           items: [
-            { name: "Banana prata", qty: "1 un.", how: "eat" },
+            { name: "Banana-prata", qty: "1 un.", how: "eat" },
             { name: "Aveia em flocos", qty: "30 g", how: "eat" },
-            { name: "Carnibol Darkness blueberry", qty: "35 g · 2 scoops", how: "drink" },
+            { name: "Carnibol Darkness (mirtilo)", qty: "35 g · 2 dosadores", how: "drink" },
           ],
-          note: "Come a banana e a aveia. O Carnibol é só com água, no copo. Não é whey — é proteína de carne + colágeno. Os 130 kcal importam mais que o marketing. Sem liquidificador.",
+          note: "Come a banana e a aveia. O Carnibol é só com água, no copo. Não é proteína de leite — é proteína de carne + colágeno. Os 130 kcal importam mais que o marketing. Sem liquidificador.",
         },
         {
           id: "lunch",
@@ -401,7 +401,7 @@ window.LIFT_I18N = {
           kcal: "~755 / ~845 kcal",
           items: [
             { name: "Arroz branco cozido", qty: "250 g" },
-            { name: "Feijão carioca/pinto cozido", qty: "100 g" },
+            { name: "Feijão carioca cozido", qty: "100 g" },
             { name: "Patinho ou peito de frango", qty: "150 g" },
             { name: "Manteiga + azeite", qty: "15 g no preparo" },
           ],
@@ -414,7 +414,7 @@ window.LIFT_I18N = {
           kcal: "igual ao almoço",
           items: [
             { name: "Arroz branco cozido", qty: "250 g" },
-            { name: "Feijão carioca/pinto cozido", qty: "100 g" },
+            { name: "Feijão carioca cozido", qty: "100 g" },
             { name: "Patinho ou peito de frango", qty: "150 g" },
             { name: "Manteiga + azeite", qty: "15 g no preparo" },
           ],
@@ -424,7 +424,7 @@ window.LIFT_I18N = {
       supps: [
         { when: "9:00", name: "Puran T4", d: "Ao acordar. Só água. Esperar 30–60 min. Sem café, queijo, ferro ou multi neste intervalo." },
         { when: "11:00", name: "Creatina 5–6 g", d: "No café do café da manhã. Bebe o copo. Não deixa no fogo." },
-        { when: "14:00", name: "Carnibol 35 g", d: "2 scoops + ~250 ml água. Beber. Sem blender." },
+        { when: "14:00", name: "Carnibol 35 g", d: "2 dosadores + ~250 ml água. Beber. Sem liquidificador." },
         { when: "00:15", name: "Multi Ultra + melatonina 5 mg", d: "1 comprimido do Growth, não 2. Depois do jantar. Melatonina 30–45 min antes de dormir." },
       ],
       rules: [
@@ -432,7 +432,7 @@ window.LIFT_I18N = {
         "A caminhada de 5 min no sol até a academia já conta. Depois do treino, se der, mais 10 min.",
         "Não espera fome. Marca no app depois que comer.",
         "Balança de manhã, 3–4× por semana. Alvo +0,2–0,3 kg na média semanal.",
-        "2 semanas plana: +80 g de arroz cozido no jantar. Não põe segundo scoop de Carnibol.",
+        "2 semanas plana: +80 g de arroz cozido no jantar. Não põe a segunda dose de Carnibol.",
         "Sobe mais que ~0,4 kg/semana por 2 semanas: tira os 80 g de arroz.",
       ],
     },
@@ -827,9 +827,9 @@ window.LIFT_I18N = {
           title: "Post-gym",
           kcal: "~325 kcal",
           items: [
-            { name: "Banana prata", qty: "1", how: "eat" },
+            { name: "Apple banana", qty: "1", how: "eat" },
             { name: "Rolled oats", qty: "30 g", how: "eat" },
-            { name: "Carnibol Darkness blueberry", qty: "35 g · 2 scoops", how: "drink" },
+            { name: "Carnibol Darkness (blueberry)", qty: "35 g · 2 scoops", how: "drink" },
           ],
           note: "Eat the banana and the oats. Carnibol is water in a glass only. Not whey — beef protein + collagen. The 130 kcal matter more than the label. No blender.",
         },
