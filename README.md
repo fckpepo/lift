@@ -20,13 +20,13 @@ A semana 1 começa na **segunda da semana do primeiro treino marcado**. Depois o
 
 | Dia | Sessão |
 | --- | --- |
-| Seg | Upper A |
-| Ter | Lower A (Hack / joelho-safe) |
-| Qua | Zona 2 (bike / elíptico) |
-| Qui | Upper B + finisher Z2 20–25 min |
-| Sex | Lower B (posterior, sem terra) |
+| Seg | Upper A (~45 min) |
+| Ter | Lower A — quad, Hack (~45 min) |
+| Qua | Zona 2 bike / elíptico (40 min, teto 45) |
+| Qui | Upper B (~45 min) |
+| Sex | Lower B — posterior + RDL (~45 min) |
 
-Sábado e domingo não são programados.
+Sábado e domingo não são programados. Cada sessão de dia de semana cabe em **45 minutos** com descanso de 2–3 min nos compostos (menos séries, não menos rest).
 
 ## Joelho
 

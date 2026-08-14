@@ -205,7 +205,7 @@
       <div class="session-head">
         <div>
           <h2 class="session-title">${ses.title}</h2>
-          <div class="session-meta">${headDate}${isToday ? " · hoje" : ""}</div>
+          <div class="session-meta">${headDate}${isToday ? " · hoje" : ""} · ${ses.minutes || 45} min</div>
         </div>
         <div class="kind-pill kind-${ses.tag}">${ses.tagLabel}</div>
       </div>
@@ -375,8 +375,8 @@
       </div>
       <div class="section-label">Onde encaixa</div>
       <div class="card">
-        <p><strong>Quarta</strong> é o dia de cardio. Sem musculação. 40–50 min na maior parte das semanas.</p>
-        <p style="margin-top:8px"><strong>Quinta</strong>, depois do Upper B, 20–25 min fáceis na bike — segunda dose de Z2 sem pisar no joelho.</p>
+        <p><strong>Quarta</strong> é o único dia de cardio no relógio. 40 min na bike, sessão inteira ≤45. Sem musculação.</p>
+        <p style="margin-top:8px"><strong>Seg / ter / qui / sex</strong> são só musculação, 45 min. Sem finisher de cardio — não cabe com rest de 2–3 min.</p>
         <p style="margin-top:8px">Fim de semana não é prioridade. Se sobrar energia, caminhada. Sem corrida.</p>
       </div>
       <div class="section-label">Bloco de 4 semanas</div>
