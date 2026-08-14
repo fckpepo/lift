@@ -392,7 +392,7 @@ window.LIFT_I18N = {
             { name: "Aveia em flocos", qty: "30 g", how: "eat" },
             { name: "Carnibol Darkness (mirtilo)", qty: "35 g · 2 dosadores", how: "drink" },
           ],
-          note: "Come a banana e a aveia. O Carnibol é só com água, no copo. Não é proteína de leite — é proteína de carne + colágeno. Os 130 kcal importam mais que o marketing. Sem liquidificador.",
+          note: "Come a banana e a aveia. O Carnibol é só com água, no copo. Não é whey — é proteína de carne + colágeno. Os 130 kcal importam mais que o marketing. Sem liquidificador.",
         },
         {
           id: "lunch",
